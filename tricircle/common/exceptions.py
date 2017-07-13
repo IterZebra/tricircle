@@ -99,6 +99,41 @@ class TricircleException(Exception):
         return six.text_type(self.msg)
 
 
+class CoreRouterInterfaceDeleteNotFound(TricircleException):
+    message = _(' Failed to delete core_router_interface, interface core_router_id :'
+                ' %(core_router_id)s fabric : %(fabric)s not found ')
+
+class CoreRouterRoutesCreateException(TricircleException):
+    message = _(' Failed to create core_routerroutes')
+
+class CoreRouterRoutesUpdateException(TricircleException):
+    message = _(' Failed to update core_routerroutes')
+
+
+class RouteEntryDestinationCidrsCreateException(TricircleException):
+    message = _(' Failed to create route_entry destination_cidrs')
+
+class RouteEntryDestinationCidrsUpdateException(TricircleException):
+    message = _(' Failed to update route_entry destination_cidrs')
+
+
+
+
+class CoreRouterInUse(TricircleException):
+    message = _(' Failed to delete core_router %(core_router_id)s has associated resource(s)')
+
+class CoreRouterInUseInterfacesException(CoreRouterInUse):
+    message = _(' Failed to delete core_router %(core_router_id)s has %(count)s interface(s)')
+
+class CoreRouterInUseConnectionsException(CoreRouterInUse):
+    message = _(' Failed to delete core_router %(core_router_id)s has %(count)s dci connection(s)')
+
+class CoreRouterInUseFirewallGatewaysException(CoreRouterInUse):
+    message = _(' Failed to delete core_router %(core_router_id)s has %(count)s firewall_gateway(s)')
+
+class CoreRouterInUseFirewallBypasssException(CoreRouterInUse):
+    message = _(' Failed to delete core_router %(core_router_id)s has %(count)s firewall_bypass(s)')
+
 class BadRequest(TricircleException):
     message = _('Bad %(resource)s request: %(msg)s')
 
@@ -213,6 +248,7 @@ class HTTPForbiddenError(TricircleException):
 
 class Duplicate(TricircleException):
     pass
+
 
 
 class ServerMappingsNotFound(NotFound):

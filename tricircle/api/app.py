@@ -19,6 +19,7 @@ from oslo_config import cfg
 
 from tricircle.common.i18n import _
 from tricircle.common import restapp
+from tricircle.hooks import body_validation
 
 
 common_opts = [
@@ -64,12 +65,15 @@ def setup_app(*args, **kwargs):
 
     # app_hooks = [], hook collection will be put here later
 
+    app_hooks = [
+        body_validation.BodyValidationHook(),  # priority 120
+    ]
     app = pecan.make_app(
         pecan_config.app.root,
         debug=False,
         wrap_app=restapp.auth_app,
         force_canonical=False,
-        hooks=[],
+        hooks=app_hooks,
         guess_content_type_from_ext=True
     )
 

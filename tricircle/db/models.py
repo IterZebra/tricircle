@@ -16,16 +16,18 @@
 from oslo_db.sqlalchemy import models
 
 import sqlalchemy as sql
+
+from sqlalchemy import orm
+
 from sqlalchemy.dialects import mysql
 from sqlalchemy import schema
 
 from tricircle.db import core
+from tricircle.db import constants
 
 
 def MediumText():
     return sql.Text().with_variant(mysql.MEDIUMTEXT(), 'mysql')
-
-
 # Pod Model
 class Pod(core.ModelBase, core.DictBase):
     __tablename__ = 'pods'
@@ -147,3 +149,200 @@ class RecycleResources(core.ModelBase, core.DictBase):
                                sql.String(length=64), nullable=False)
     project_id = sql.Column('project_id',
                             sql.String(length=36), nullable=False, index=True)
+
+class CoreRouterRoute(core.ModelBase, core.DictBase):
+    __tablename__ = 'core_routerroutes'
+    attributes = ['core_router_id','destination', 'nexthop']
+    destination = sql.Column(sql.String(64), nullable=False, primary_key=True)
+    nexthop = sql.Column(sql.String(64), nullable=False, primary_key=True)
+    core_router_id = sql.Column(sql.String(36),
+                          sql.ForeignKey('core_routers.id',
+                                        ondelete="CASCADE"),
+                          primary_key=True)
+
+
+class CoreRouterInterface(core.ModelBase, core.DictBase):
+    __tablename__ = 'core_router_interfaces'
+    attributes = ['interface_id','core_router_id','fabric','project_id']
+    interface_id = sql.Column('interface_id',
+                             sql.String(length=36), primary_key=True)
+    core_router_id = sql.Column(sql.String(36),
+                          sql.ForeignKey('core_routers.id',
+                                        ondelete="CASCADE"))
+    fabric= sql.Column('fabric', sql.String(length=255), nullable=False)
+    project_id= sql.Column('project_id', sql.String(length=36), nullable=False)
+
+class DCI(core.ModelBase, core.DictBase):
+    __tablename__ = 'dcis'
+    attributes = ['id','fabric', 'router_id', 'dci_peering_id',
+                  'type','name','project_id', 'admin_state_up',
+                  'description', 'status']
+    id= sql.Column('id', sql.String(length=36), primary_key=True)
+    fabric= sql.Column('fabric', sql.String(length=255), nullable=False)
+    router_id = sql.Column('router_id', sql.String(length=36), nullable=False)
+    dci_peering_id = sql.Column('dci_peering_id', sql.String(length=36), nullable=False)
+    type= sql.Column('type',sql.String(16), nullable=False)
+    name= sql.Column('name', sql.String(length=255), nullable=False)
+    project_id= sql.Column('project_id', sql.String(length=36), nullable=False)
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+    description = sql.Column('description', sql.String(length=255), nullable=True)
+    status= sql.Column('status',sql.String(16), nullable=False, server_default=constants.DOWN_STATUS)
+    #local_router_id= sql.Column('local_router_id',sql.String(36),
+    #                      sql.ForeignKey('core_routers.id',
+    #                                    ondelete="CASCADE"))
+
+class DynamicPeeringConnection(core.ModelBase, core.DictBase):
+    __tablename__ = 'dynamic_peering_connections'
+    attributes = ['dynamic_peering_connection_id', 'local_router_id', 'peering_router_id',
+                  'dynamic_peering_connection_name', 'project_id', 'admin_state_up', 
+                  'description', 'status']
+    dynamic_peering_connection_id = sql.Column('dynamic_peering_connection_id', sql.String(length=36), primary_key=True)
+    dynamic_peering_connection_name= sql.Column('dynamic_peering_connection_name', sql.String(length=255), nullable=False)
+    peering_router_id = sql.Column('peering_router_id', sql.String(length=36), nullable=False)
+    #local_router_id = sql.Column('local_router_id', sql.String(length=36), nullable=False)
+    project_id= sql.Column('project_id', sql.String(length=36), nullable=False)
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+    description = sql.Column('description', sql.String(length=255), nullable=True)
+    status= sql.Column('status',sql.String(16), nullable=False, server_default=constants.DOWN_STATUS)
+    local_router_id= sql.Column('local_router_id',sql.String(36),
+                          sql.ForeignKey('core_routers.id',
+                                        ondelete="CASCADE"))
+    #peering_router_id= sql.Column('peering_router_id',sql.String(36),
+    #                      sql.ForeignKey('core_routers.id',
+    #                                    ondelete="CASCADE"),
+    #                      primary_key=True)
+
+
+class FirewallGateway(core.ModelBase, core.DictBase):
+    __tablename__ = 'firewall_gateways'
+    attributes = ['id','fabric','firewall_id', 'router_id', 'project_id',
+                  'admin_state_up', 'description', 'status']
+
+    id= sql.Column('id', sql.String(length=36), primary_key=True)
+    fabric= sql.Column('fabric', sql.String(length=255), nullable=False)
+    firewall_id = sql.Column('firewall_id', sql.String(length=36), primary_key=False)
+    router_id= sql.Column('router_id', sql.String(length=36), primary_key=False)
+    project_id= sql.Column('project_id', sql.String(length=36), nullable=False)
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+    status= sql.Column('status',sql.String(16), nullable=False, server_default=constants.DOWN_STATUS)
+    description = sql.Column('description', sql.String(length=255), nullable=True)
+
+
+class FirewallBypass(core.ModelBase, core.DictBase):
+    __tablename__ = 'firewall_bypasss'
+    attributes = ['id', 'fabric', 'core_router_id',
+                  'router_id', 'project_id',
+                  'admin_state_up', 'description', 'status']
+
+    id= sql.Column('id', sql.String(length=36), primary_key=True)
+    fabric= sql.Column('fabric', sql.String(length=255), nullable=False)
+    router_id= sql.Column('router_id', sql.String(length=36), primary_key=False)
+    project_id= sql.Column('project_id', sql.String(length=36), nullable=False)
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+    status= sql.Column('status',sql.String(16), nullable=False, server_default=constants.DOWN_STATUS)
+    description = sql.Column('description', sql.String(length=255), nullable=True)
+    core_router_id= sql.Column('core_router_id',sql.String(36),
+                          sql.ForeignKey('core_routers.id',
+                                        ondelete="CASCADE"))
+
+# Core Router Model
+class CoreRouter(core.ModelBase, core.DictBase):
+    __tablename__ = 'core_routers'
+    attributes = ['id', 'dc', 'project_id', 'core_router_name',
+                  'admin_state_up', 'description', 'status']
+
+    id = sql.Column('id', sql.String(length=36), primary_key=True)
+    dc= sql.Column('dc', sql.String(length=255), nullable=False)
+    project_id= sql.Column('project_id', sql.String(length=36), nullable=False)
+    core_router_name= sql.Column('core_router_name', sql.String(length=255), nullable=False)
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+    description = sql.Column('description', sql.String(length=255), nullable=True)
+    status= sql.Column('status',sql.String(16), nullable=False, server_default=constants.DOWN_STATUS)
+    routes = orm.relationship(CoreRouterRoute,
+                              backref='core_router',
+                              cascade='all, delete, delete-orphan',
+                              lazy='subquery')
+    interfaces = orm.relationship(CoreRouterInterface,
+                              backref='core_router',
+                              cascade='all, delete, delete-orphan',
+                              lazy='subquery')
+    firewall_bypasss= orm.relationship(FirewallBypass,
+                              backref='core_router',
+                              cascade='all, delete, delete-orphan',
+                              lazy='subquery')
+
+class TricircleResource(core.ModelBase, core.DictBase, models.TimestampMixin):
+    __tablename__ = 'tricircle_resources'
+    attributes = ['id', 'region_name','project_id','name','status','admin_state_up',
+                  'resource_type', 'created_at', 'updated_at']
+
+    id= sql.Column('id', sql.String(length=36), primary_key=True)
+    name= sql.Column('name', sql.String(length=255), nullable=False)
+    region_name= sql.Column('region_name', sql.String(length=255), nullable=False)
+    project_id = sql.Column('project_id', sql.String(length=36),nullable=False)
+    resource_type = sql.Column('resource_type', sql.String(length=64),
+                               nullable=False)
+    status = sql.Column('status', sql.String(length=36))
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+
+class Fabric(core.ModelBase, core.DictBase):
+    __tablename__ = 'fabrics'
+    attributes = ['id', 'dc_id', 'fabric_name']
+
+    id = sql.Column('id', sql.String(length=36), primary_key=True)
+    dc_id = sql.Column('dc_id', sql.String(length=36),
+                        sql.ForeignKey('dcs.id'),
+                        nullable=False)
+    fabric_name = sql.Column('fabric_name', sql.String(length=255),
+                             unique=True, nullable=False)
+
+class DC(core.ModelBase, core.DictBase):
+    __tablename__ = 'dcs'
+    attributes = ['id', 'region_id', 'dc_name']
+
+    id = sql.Column('id', sql.String(length=36), primary_key=True)
+    region_id = sql.Column('region_id', sql.String(length=36),
+                        sql.ForeignKey('regions.id'),
+                        nullable=False)
+    dc_name= sql.Column('dc_name', sql.String(length=255),
+                             unique=True, nullable=False)
+    fabrics = orm.relationship(Fabric,
+                              backref='dc',
+                              cascade='all, delete, delete-orphan',
+                              lazy='subquery')
+ 
+class Region(core.ModelBase, core.DictBase):
+    __tablename__ = 'regions'
+    attributes = ['id', 'region_name']
+
+    id = sql.Column('id', sql.String(length=36), primary_key=True)
+    region_name = sql.Column('region_name', sql.String(length=255),
+                             unique=True, nullable=False)
+    dcs= orm.relationship(DC,backref='region',
+                              cascade='all, delete, delete-orphan',
+                              lazy='subquery')
+
+class DestinationCidr(core.ModelBase, core.DictBase):
+    __tablename__ = 'destination_cidrs'
+    attributes = ['destination']
+    destination = sql.Column(sql.String(64), nullable=False, primary_key=True)
+    route_entry_id= sql.Column('route_entry_id',sql.String(36),
+                                        sql.ForeignKey('route_entries.id',
+                                        ondelete="CASCADE"),primary_key=True)
+
+
+class RouteEntry(core.ModelBase, core.DictBase):
+    __tablename__ = 'route_entries'
+    attributes = ['id','src_router','nxt_router','project_id',
+                   'status','admin_state_up','description','destination_cidr_list']
+    id= sql.Column('id', sql.String(length=36), primary_key=True)
+    src_router= sql.Column('src_router', sql.String(length=36), nullable=False)
+    nxt_router= sql.Column('nxt_router', sql.String(length=36), nullable=False)
+    project_id = sql.Column('project_id', sql.String(length=36),nullable=False)
+    admin_state_up = sql.Column(sql.Boolean(), nullable=False)
+    status= sql.Column('status',sql.String(16), nullable=False, server_default=constants.DOWN_STATUS)
+    description = sql.Column('description', sql.String(length=255), nullable=True)
+    destination_cidr_list= orm.relationship(DestinationCidr,backref='route_entry',
+                              cascade='all, delete, delete-orphan',
+                              lazy='subquery')
+
