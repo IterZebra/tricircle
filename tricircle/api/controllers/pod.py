@@ -17,7 +17,7 @@ import pecan
 from pecan import expose
 from pecan import Response
 from pecan import rest
-
+from pecan import request
 import oslo_db.exception as db_exc
 from oslo_log import log as logging
 from oslo_utils import uuidutils
@@ -33,10 +33,10 @@ from tricircle.db import models
 
 LOG = logging.getLogger(__name__)
 
-
 class PodsController(rest.RestController):
 
     def __init__(self):
+        self.resource = "pods"
         pass
 
     @expose(generic=True, template='json')

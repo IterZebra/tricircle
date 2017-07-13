@@ -117,6 +117,10 @@ def get_resource(context, model, pk_value):
     return _get_resource(context, model, pk_value).to_dict()
 
 
+def get_resource_object(context, model, pk_value):
+    return _get_resource(context, model, pk_value)
+
+
 def get_session(expire_on_commit=False):
     return _get_engine_facade().get_session(expire_on_commit=expire_on_commit)
 

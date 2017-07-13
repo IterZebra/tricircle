@@ -708,3 +708,257 @@ def delete_recycle_resource(context, resource_id):
     with context.session.begin():
         return core.delete_resource(
             context, models.RecycleResources, resource_id)
+
+
+
+def create_core_router(context, core_router_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.CoreRouter, core_router_dict)
+
+
+def delete_core_router(context, core_router_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.CoreRouter, core_router_id)
+
+
+def get_core_router(context, core_router_id):
+    with context.session.begin():
+        return core.get_resource(context, models.CoreRouter, core_router_id)
+
+
+def list_core_routers(context, filters=None, sorts=None):
+    return core.query_resource(context, models.CoreRouter, filters or [],
+                               sorts or [])
+
+
+def update_core_router(context, core_router_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.CoreRouter, core_router_id, update_dict)
+
+
+
+def create_dynamic_peering_connection(context, core_router_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.DynamicPeeringConnection, core_router_dict)
+
+
+def delete_dynamic_peering_connection(context, core_router_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.DynamicPeeringConnection, core_router_id)
+
+
+def get_dynamic_peering_connection(context, core_router_id):
+    with context.session.begin():
+        return core.get_resource(context, models.DynamicPeeringConnection, core_router_id)
+
+
+def list_dynamic_peering_connections(context, filters=None, sorts=None):
+    return core.query_resource(context, models.DynamicPeeringConnection, filters or [],
+                               sorts or [])
+
+
+def update_dynamic_peering_connection(context, core_router_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.DynamicPeeringConnection, core_router_id, update_dict)
+
+
+
+def create_firewall_gateway(context, core_router_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.FirewallGateway, core_router_dict)
+
+
+def delete_firewall_gateway(context, core_router_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.FirewallGateway, core_router_id)
+
+
+def get_firewall_gateway(context, core_router_id):
+    with context.session.begin():
+        return core.get_resource(context, models.FirewallGateway, core_router_id)
+
+
+def list_firewall_gateways(context, filters=None, sorts=None):
+    return core.query_resource(context, models.FirewallGateway, filters or [],
+                               sorts or [])
+
+
+def update_firewall_gateway(context, core_router_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.FirewallGateway, core_router_id, update_dict)
+
+
+
+def create_firewall_bypass(context, core_router_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.FirewallBypass, core_router_dict)
+
+
+def delete_firewall_bypass(context, core_router_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.FirewallBypass, core_router_id)
+
+
+def get_firewall_bypass(context, core_router_id):
+    with context.session.begin():
+        return core.get_resource(context, models.FirewallBypass, core_router_id)
+
+
+def list_firewall_bypasss(context, filters=None, sorts=None):
+    return core.query_resource(context, models.FirewallBypass, filters or [],
+                               sorts or [])
+
+
+def update_firewall_bypass(context, firewall_bypass_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.FirewallBypass, firewall_bypass_id, update_dict)
+
+def create_tricircle_resource(context, core_router_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.TricircleResource, core_router_dict)
+
+
+def delete_tricircle_resource(context, core_router_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.TricircleResource, core_router_id)
+
+
+def get_tricircle_resource(context, core_router_id):
+    with context.session.begin():
+        return core.get_resource(context, models.TricircleResource, core_router_id)
+
+
+def list_tricircle_resources(context, filters=None, sorts=None):
+    return core.query_resource(context, models.TricircleResource, filters or [],
+                               sorts or [])
+
+
+def update_tricircle_resource(context, core_router_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.TricircleResource, core_router_id, update_dict)
+
+
+
+
+
+def create_region(context, region_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.Region, region_dict)
+
+
+def delete_region(context, region_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.Region, region_id)
+
+
+def get_region(context, region_id):
+    with context.session.begin():
+        return core.get_resource(context, models.Region, region_id)
+
+
+def list_regions(context, filters=None, sorts=None):
+    return core.query_resource(context, models.Region, filters or [],
+                               sorts or [])
+
+
+def update_region(context, region_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.Region, region_id, update_dict)
+
+def create_dc(context, dc_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.DC, dc_dict)
+
+
+def delete_dc(context, dc_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.DC, dc_id)
+
+
+def get_dc(context, dc_id):
+    with context.session.begin():
+        return core.get_resource(context, models.DC, dc_id)
+
+
+def list_dcs(context, filters=None, sorts=None):
+    return core.query_resource(context, models.DC, filters or [],
+                               sorts or [])
+
+
+def update_dc(context, dc_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.DC, dc_id, update_dict)
+
+
+def create_fabric(context, fabric_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.Fabric, fabric_dict)
+
+
+def delete_fabric(context, fabric_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.Fabric, fabric_id)
+
+
+def get_fabric(context, fabric_id):
+    with context.session.begin():
+        return core.get_resource(context, models.Fabric, fabric_id)
+
+
+def list_fabrics(context, filters=None, sorts=None):
+    return core.query_resource(context, models.Fabric, filters or [],
+                               sorts or [])
+
+
+def update_fabric(context, fabric_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.Fabric, fabric_id, update_dict)
+
+
+
+def create_dci(context, dci_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.DCI, dci_dict)
+
+
+def delete_dci(context, dci_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.DCI, dci_id)
+
+
+def get_dci(context, dci_id):
+    with context.session.begin():
+        return core.get_resource(context, models.DCI, dci_id)
+
+
+def list_dcis(context, filters=None, sorts=None):
+    return core.query_resource(context, models.DCI, filters or [],
+                               sorts or [])
+
+def update_dci(context, dci_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.DCI, dci_id, update_dict)
+
+def create_route_entry(context, route_entry_dict):
+    with context.session.begin():
+        return core.create_resource(context, models.RouteEntry, route_entry_dict)
+
+
+def delete_route_entry(context, route_entry_id):
+    with context.session.begin():
+        return core.delete_resource(context, models.RouteEntry, route_entry_id)
+
+
+def get_route_entry(context, route_entry_id):
+    with context.session.begin():
+        return core.get_resource(context, models.RouteEntry, route_entry_id)
+
+
+def list_route_entrys(context, filters=None, sorts=None):
+    return core.query_resource(context, models.RouteEntry, filters or [],
+                               sorts or [])
+
+def update_route_entry(context, route_entry_id, update_dict):
+    with context.session.begin():
+        return core.update_resource(context, models.RouteEntry, route_entry_id, update_dict)
+

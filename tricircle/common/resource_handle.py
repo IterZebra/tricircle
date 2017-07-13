@@ -18,6 +18,7 @@ from keystoneauth1 import session
 
 from neutronclient.common import exceptions as q_exceptions
 from neutronclient.neutron import client as q_client
+from neutronclient.v2_0 import client as neutron_client
 from oslo_config import cfg
 from oslo_log import log as logging
 from tricircle.common import constants as cons
@@ -38,6 +39,31 @@ operation_index_map = {'list': LIST, 'create': CREATE, 'delete': DELETE,
 LOG = logging.getLogger(__name__)
 
 
+class SimpleNeutronClient(neutron_client.Client):
+    def __init__(self, **kwargs):
+        super(SimpleNeutronClient, self).__init__(**kwargs)
+        self.tricircle_resources_path = "/tricircle_resources"
+        self.tricircle_resource_path = "/tricircle_resources/%s"
+        self.version = '1.0'
+
+
+    def create_tricircle_resource(self, body=None):
+        print "MaXiao create_tricircle_resource"+str(body)
+        print "MaXiao create_tricircle_resource path"+str(self.tricircle_resource_path)
+        return self.post(self.tricircle_resources_path, body=body)
+
+    def update_tricircle_resource(self, resource, body=None):
+        print "MaXiao update_tricircle_resource"+str(body)
+        print "MaXiao update_tricircle_resource path"+str(self.tricircle_resource_path)
+        return self.put(self.tricircle_resource_path % (resource), body=body)
+
+
+    def delete_tricircle_resource(self, resource):
+        print "MaXiao delete_tricircle_resource"+str(resource)
+        print "MaXiao delete_tricircle_resource path "+ str(self.tricircle_resource_path)
+        return self.delete(self.tricircle_resource_path % (resource))
+
+
 def _transform_filters(filters):
     filter_dict = {}
     for query_filter in filters:
@@ -51,9 +77,10 @@ def _transform_filters(filters):
 
 
 class ResourceHandle(object):
-    def __init__(self, auth_url):
+    def __init__(self, auth_url, version=2.0 ):
         self.auth_url = auth_url
         self.endpoint_url = None
+        self.version = version
 
     def is_endpoint_url_set(self):
         return self.endpoint_url is not None
@@ -104,8 +131,7 @@ class NeutronResourceHandle(ResourceHandle):
         token = cxt.auth_token
         if not token and cxt.is_admin:
             token = self.get_admin_token(cxt.tenant)
-        return q_client.Client('2.0',
-                               token=token,
+        return SimpleNeutronClient(token=token,
                                auth_url=self.auth_url,
                                endpoint_url=self.endpoint_url,
                                timeout=cfg.CONF.client.neutron_timeout)
@@ -124,6 +150,7 @@ class NeutronResourceHandle(ResourceHandle):
     def handle_create(self, cxt, resource, *args, **kwargs):
         try:
             client = self._get_client(cxt)
+            print "MaXiao handle_create "+str(resource)
             ret = getattr(client, 'create_%s' % resource)(
                 *args, **kwargs)
             if resource in ret:
@@ -156,6 +183,7 @@ class NeutronResourceHandle(ResourceHandle):
 
     def handle_delete(self, cxt, resource, resource_id):
         try:
+            print "MaXiao handle_delete "+str(resource)
             client = self._get_client(cxt)
             return getattr(client, 'delete_%s' % resource)(resource_id)
         except q_exceptions.ConnectionFailed:

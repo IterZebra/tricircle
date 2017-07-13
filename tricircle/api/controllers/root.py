@@ -16,12 +16,22 @@
 
 import pecan
 from pecan import request
-
+from pecan import rest
+from tricircle.api.controllers import region
+from tricircle.api.controllers import dc
+from tricircle.api.controllers import fabric
 from tricircle.api.controllers import job
+from tricircle.api.controllers import tricircle_resource
 from tricircle.api.controllers import pod
+from tricircle.api.controllers import core_router
+from tricircle.api.controllers import dci
+from tricircle.api.controllers import dynamic_peering_connection
+from tricircle.api.controllers import firewall_gateway 
+from tricircle.api.controllers import firewall_bypass 
+from tricircle.api.controllers import route_entry 
 from tricircle.api.controllers import routing
 import tricircle.common.context as t_context
-
+import webob.exc
 
 def expose(*args, **kwargs):
     kwargs.setdefault('content_type', 'application/json')
@@ -39,9 +49,12 @@ class RootController(object):
 
     @expose()
     def _lookup(self, version, *remainder):
-        if version == 'v1.0':
+        if version == 'svpc':
             return V1Controller(), remainder
-
+        else:
+            msg = "URL not found "
+            raise webob.exc.HTTPBadRequest(msg)       
+ 
     @pecan.expose(generic=True, template='json')
     def index(self):
         return {
@@ -69,11 +82,21 @@ class RootController(object):
         pecan.abort(405)
 
 
-class V1Controller(object):
+class V1Controller(rest.RestController):
 
     def __init__(self):
 
         self.sub_controllers = {
+            "regions": region.RegionsController(),
+            "dcs": dc.DCsController(),
+            "fabrics": fabric.FabricsController(),
+            "tricircle_resources": tricircle_resource.TricircleResourcesController(),
+            "core_routers": core_router.CoreRoutersController(),
+            "dcis": dci.DCIsController(),
+            "dynamic_peering_connections": dynamic_peering_connection.DynamicPeeringConnectionsController(),
+            "firewall_gateways": firewall_gateway.FirewallGatewaysController(),
+            "firewall_bypasss": firewall_bypass.FirewallBypasssController(),
+            "route_entries": route_entry.RouteEntrysController(),
             "pods": pod.PodsController(),
             "routings": routing.RoutingController(),
             "jobs": job.AsyncJobController()
@@ -81,6 +104,48 @@ class V1Controller(object):
 
         for name, ctrl in self.sub_controllers.items():
             setattr(self, name, ctrl)
+
+    @pecan.expose()
+    def _lookup(self, resource , *remainder):
+        if resource== 'regions':
+            request.context['resource'] = "region" 
+            return self.regions,remainder
+        if resource== 'dcs':
+            request.context['resource'] = "dc" 
+            return self.dcs,remainder
+        if resource== 'fabrics':
+            request.context['resource'] = "fabric" 
+            return self.fabrics,remainder
+        if resource== 'tricircle_resources':
+            request.context['resource'] = "tricircle_resource" 
+            return self.tricircle_resources,remainder
+        if resource== 'routers':
+            request.context['resource'] = "core_router" 
+            return self.core_routers,remainder
+        if resource== 'core_routers':
+            request.context['resource'] = "core_router" 
+            return self.core_routers,remainder
+        if resource== 'dynamic_peering_connections':
+            request.context['resource'] = "dynamic_peering_connection" 
+            return self.dynamic_peering_connections,remainder
+        if resource== 'firewall_gateways':
+            request.context['resource'] = "firewall_gateway" 
+            return self.firewall_gateways,remainder
+        if resource== 'firewall_bypasss':
+            request.context['resource'] = "firewall_bypass" 
+            return self.firewall_bypasss,remainder
+        if resource== 'route_entry':
+            request.context['resource'] = "route_entry" 
+            return self.route_entries,remainder
+        if resource== 'pods':
+            request.context['resource'] = "pod" 
+            return self.pods,remainder
+        if resource== 'dcis':
+            request.context['resource'] = "dci" 
+            return self.dcis,remainder
+        else:
+            msg = "URL not found "
+            raise webob.exc.HTTPBadRequest(msg)       
 
     @pecan.expose(generic=True, template='json')
     def index(self):

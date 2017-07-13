@@ -152,7 +152,7 @@ def format_error(code, message, error_type=None):
             error_type = 'Error'
     # format error message in this form so nova client can
     # correctly parse it
-    return {error_type: {'message': message, 'code': code}}
+    return {error_type: {'message': message, 'code': code, 'status':'fail','content':{}}}
 
 
 def format_api_error(code, message, error_type=None):
